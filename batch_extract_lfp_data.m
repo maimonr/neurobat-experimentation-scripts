@@ -10,6 +10,7 @@ total_dirs = 1;
 t = tic;
 success = [];
 exp_dirs = dir(fullfile(baseDir,'*20*'));
+exp_dirs = exp_dirs([exp_dirs.isdir]);
 
 all_exp_dirs = cell(1,length(exp_dirs));
 for k = 1:length(exp_dirs)

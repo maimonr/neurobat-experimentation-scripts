@@ -196,7 +196,7 @@ if strcmp(callStr,'operant')
     call_trig_lfp_fname = [call_trig_lfp_fname '_call_trig_operant.mat'];
 elseif strcmp(callStr,'social')
     cut_call_data_fname = fullfile(call_data_dir,[exp_day_str '_cut_call_data_social.mat']);
-    call_trig_lfp_fname = [call_trig_lfp_fname '_call_trig_operant.mat'];
+    call_trig_lfp_fname = [call_trig_lfp_fname '_call_trig_social.mat'];
 else
     cut_call_data_fname = fullfile(call_data_dir,[exp_day_str '_cut_' callStr '_data.mat']);
     call_trig_lfp_fname = [call_trig_lfp_fname '_' callStr '_trig.mat'];
