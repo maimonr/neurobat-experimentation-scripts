@@ -1,8 +1,8 @@
 function [success,errs] = batch_extract_lfp_data(eData,baseDir,varargin)
 
-pnames = {'localDir','overwrite_flag'};
-dflts  = {[],false,false};
-[localDir,overwrite_flag] = internal.stats.parseArgs(pnames,dflts,varargin{:});
+pnames = {'localDir','overwrite_flag','used_exp_dates'};
+dflts  = {[],false,false,[]};
+[localDir,overwrite_flag,used_exp_dates] = internal.stats.parseArgs(pnames,dflts,varargin{:});
 
 remote_copy_flag = ~isempty(localDir);
 
@@ -20,9 +20,12 @@ end
 lastProgress = 0;
 for k = 1:length(exp_dirs)
     [exp_dir,remote_exp_dir] = deal(fullfile(exp_dirs(k).folder,exp_dirs(k).name));
+    exp_date_str = exp_dirs(k).name;
+    expDate = datetime(exp_date_str,'InputFormat','MMddyyyy');
+    if ~isempty(used_exp_dates) && ~ismember(expDate,used_exp_dates)
+        continue
+    end
     if remote_copy_flag
-        exp_date_str = exp_dirs(k).name;
-        expDate = datetime(exp_date_str,'InputFormat','MMddyyyy');
         local_exp_dir = fullfile(localDir,exp_date_str);
         exp_dir = local_exp_dir;
     end
@@ -30,7 +33,7 @@ for k = 1:length(exp_dirs)
         nlgDir = dir(fullfile(remote_exp_dir,'neurologgers','**',[eData.batNums{b} '*CSC0.mat']));
         if ~isempty(dir(fullfile(remote_exp_dir,'neurologgers','**',[eData.batNums{b} '*CSC0.mat'])))
             if remote_copy_flag
-                remote_nlg_dir = fullfile(nlgDir(1).folder,'*CSC*.mat');
+                remote_nlg_dir = fullfile(nlgDir(end).folder,'*CSC*.mat');
                 remote_lfp_dir = fullfile(remote_exp_dir,'lfpformat');
                 
                 if ~overwrite_flag &&  ~isempty(dir(fullfile(remote_lfp_dir,[eData.batNums{b} '*LFP.mat'])))

@@ -11,6 +11,10 @@ if any(strcmp(expType,{'adult','adult_operant','adult_social'}))
         end
         
         fs = lfpData.fs;
+        if fs ~= 2083
+            call_trig_csc_struct = [];
+            return
+        end
         timestamps = lfpData.timestamps;
         
         outDir = lfp_file_name;
