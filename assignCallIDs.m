@@ -1,7 +1,7 @@
 function assignCallIDs(expType,varargin)
 
 nID = 1e6;
-overwriteFlag = false;
+overwriteFlag = true;
 
 if nargin == 0
     expType = 'juvenile';
@@ -37,7 +37,7 @@ elseif strcmp(expType,'piezo_recording')
     all_used_call_IDs = assign_cut_call_IDs(cut_call_data_fNames,nID,overwriteFlag);
     
 elseif any(strcmp(expType,{'adult','adult_operant','adult_social'}))
-    baseDir = fullfile('E:','ephys',[expType '_recording'],'call_data');
+    baseDir = fullfile('Z:\users\Maimon\',[expType '_recording'],'call_data');
     cut_call_data_fNames = dir([baseDir '\*cut_' call_echo '_data*.mat']);
     
     all_used_call_IDs = assign_cut_call_IDs(cut_call_data_fNames,nID,overwriteFlag);
@@ -70,7 +70,7 @@ for d = 1:length(cut_call_data_fNames)
 
     available_call_IDs = find(~usedID);
     sample_call_ID_idx = randperm(length(available_call_IDs),length(cut_call_data));
-    usedID(sample_call_ID_idx) = true;
+    usedID(available_call_IDs(sample_call_ID_idx)) = true;
     randIDs = num2cell(available_call_IDs(sample_call_ID_idx));
 
     [cut_call_data(1:length(cut_call_data)).uniqueID] = deal(randIDs{:});    
