@@ -1,6 +1,7 @@
-function export_adult_call_data(baseDir,outDir,sessionType)
+function export_adult_call_data(eData,outDir,sessionType)
 
-T = get_rec_logs;
+baseDir = eData.baseDirs{1};
+T = eData.recLogs;
 
 T = T(strcmp(T.Session,sessionType) & T.usable,:);
 nSession = height(T);
@@ -32,15 +33,25 @@ for k = 1:nSession
     if exist(audio2nlg_fName_out,'file') || ~exist(audio2nlg_fName,'file')
         continue
     end
+    copyfile(audio2nlg_fName,audio2nlg_fName_out);
     
     cut_call_fName = fullfile(audio_exp_dir,'cut_call_data.mat');   
     manual_al_classify_fname = fullfile(audio_exp_dir,'manual_al_classify_batNum.mat');
     
-    if ~exist(cut_call_fName,'file') || ~exist(manual_al_classify_fname,'file')
-        continue
+    switch sessionType
+        case 'communication'
+            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data.mat']);
+        case 'operant'
+            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data_operant_box_' boxStr '.mat']);
+        case 'vocal'
+            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data.mat']);
+        case 'social'
+            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data_social.mat']);
     end
     
-    copyfile(audio2nlg_fName,audio2nlg_fName_out);
+    if ~exist(cut_call_fName,'file') || ~exist(manual_al_classify_fname,'file') || exist(cut_call_fName_out,'file')
+        continue
+    end
     
     s = load(cut_call_fName);
     cut_call_data = s.cut_call_data;
@@ -57,17 +68,6 @@ for k = 1:nSession
     
     idx = ~strcmp(manual_al_classify_batNum,'noise');
     cut_call_data = cut_call_data(idx);
-    
-    switch sessionType
-        case 'communication'
-            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data.mat']);
-        case 'operant'
-            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data_operant_box_' boxStr '.mat']);
-        case 'vocal'
-            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data.mat']);
-        case 'social'
-            cut_call_fName_out = fullfile(outDir,[exp_date_fname_str '_cut_call_data_social.mat']);
-    end
     
     save(cut_call_fName_out,'cut_call_data');
     
