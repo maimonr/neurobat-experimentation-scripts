@@ -167,17 +167,14 @@ end
 
 function all_lfp_dirs = get_lfp_data_fnames(remoteDir)
 
-if contains(remoteDir,'lfp_data')
-    all_lfp_dirs = dir(fullfile(remoteDir,'*LFP.mat'));
-else
-    exp_dirs = dir(fullfile(remoteDir,'*20*'));
-    
-    all_lfp_dirs = cell(1,length(exp_dirs));
-    for k = 1:length(exp_dirs)
-        all_lfp_dirs{k} = dir(fullfile(exp_dirs(k).folder,exp_dirs(k).name,'lfpformat','*LFP.mat'));
-    end
-    all_lfp_dirs = vertcat(all_lfp_dirs{:});
+exp_dirs = dir(fullfile(remoteDir,'*20*'));
+
+all_lfp_dirs = cell(1,length(exp_dirs));
+for k = 1:length(exp_dirs)
+    all_lfp_dirs{k} = dir(fullfile(exp_dirs(k).folder,exp_dirs(k).name,'lfpformat','*LFP.mat'));
 end
+all_lfp_dirs = vertcat(all_lfp_dirs{:});
+
 end
 
 function [cut_call_data_fname,call_trig_lfp_fname,batNum] = get_event_trig_fnames(eData,lfpDir,call_data_dir,callStr)
