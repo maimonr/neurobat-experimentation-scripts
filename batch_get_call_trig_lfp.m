@@ -7,14 +7,14 @@ dflts  = {false,'call',4};
 t = tic;
 total_dirs = 0;
 
-if any(strcmp(eData.expType{1},{'adult','adult_operant','adult_social'}))
+if any(strcmp(eData.expType,{'adult','adult_operant','adult_social'}))
     
     all_lfp_dirs = get_lfp_data_fnames(remoteDir);
     lfp_data_dir = fullfile(eData.baseDirs{1},'lfp_data\');
     call_data_dir = fullfile(eData.baseDirs{1},'call_data\');
     
-    lastProgress = 0;
-    for k = 1:length(all_lfp_dirs)
+%     lastProgress = 0;
+    parfor k = 1:length(all_lfp_dirs)
         
         [cut_call_data_fname,call_trig_lfp_fname,batNum] = get_event_trig_fnames(eData,all_lfp_dirs(k).name,call_data_dir,callType);
         
@@ -34,21 +34,21 @@ if any(strcmp(eData.expType{1},{'adult','adult_operant','adult_social'}))
         
         lfp_fname = fullfile(all_lfp_dirs(k).folder,all_lfp_dirs(k).name);
         lfpData = matfile(lfp_fname);
-        
-        get_call_trig_lfp(eData.expType{1},batNum,cut_call_data,lfp_call_offset,call_trig_lfp_fname,lfpData);
-        
-        progress = 100*(k/length(all_lfp_dirs));
-        elapsed_time = round(toc(t));
-        if mod(progress,10) < mod(lastProgress,10)
-            fprintf('%d %% of directories  processed, %d s elapsed\n',round(progress),elapsed_time);
-        end
-        lastProgress = progress;
+        tic;
+        get_call_trig_lfp(eData.expType,batNum,cut_call_data,lfp_call_offset,call_trig_lfp_fname,lfpData);
+        toc
+%         progress = 100*(k/length(all_lfp_dirs));
+%         elapsed_time = round(toc(t));
+%         if mod(progress,10) < mod(lastProgress,10)
+%             fprintf('%d %% of directories  processed, %d s elapsed\n',round(progress),elapsed_time);
+%         end
+%         lastProgress = progress;
         
     end
     
     
     
-elseif strcmp(eData.expType{1},'juvenile')
+elseif strcmp(eData.expType,'juvenile')
     call_data_dir = fullfile(eData.baseDirs{1},'call_data\');
     for b = 1:length(eData.batNums)
         lfp_data_dir = fullfile(eData.baseDirs{b},'lfp_data\');
@@ -86,7 +86,7 @@ elseif strcmp(eData.expType{1},'juvenile')
                 channelIdx = ismember(lfpData.active_channels,eData.activeChannels{b});
                 lfpData.lfpData = lfpData.lfpData(channelIdx,:);
                 
-                get_call_trig_lfp(eData.expType{b},batNum,cut_call_data,lfp_call_offset,call_trig_lfp_fname,lfpData);
+                get_call_trig_lfp(eData.expType,batNum,cut_call_data,lfp_call_offset,call_trig_lfp_fname,lfpData);
             end
             progress = 100*(d/length(nlgDirs));
             elapsed_time = round(toc(t));
